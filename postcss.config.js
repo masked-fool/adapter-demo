@@ -1,13 +1,15 @@
 export default {
   plugins: {
-    'postcss-pxtorem': {
+    tailwindcss: {},
+    autoprefixer: {},
+    "postcss-pxtorem": {
       rootValue: 16,
       unitPrecision: 5,
-      propList: ['*'],
+      propList: ["*"],
       selectorBlackList: [],
       replace: true,
       mediaQuery: false,
       minPixelValue: 0,
     },
   },
-}
+};

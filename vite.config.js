@@ -1,10 +1,18 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  css: {
-    postcss: './postcss.config.js',
+  plugins: [react()],
+  server: {
+    port: 5174,
+    host: true,
+    headers: {
+      "access-control-allow-origin": "*",
+    },
+    disableHostCheck: true,
   },
-})
+  preview: {
+    port: 5174,
+    host: true,
+  },
+});
