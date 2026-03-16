@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import TestPage from './TestPage'
+import DeviceInfo from './components/DeviceInfo'
 
 function App() {
   const [activeTab, setActiveTab] = useState('home')
@@ -42,6 +43,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DeviceInfo />
+
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[40px] xl:py-[20px] flex items-center justify-between">
           <h1 className="text-[18px] md:text-[20px] xl:text-[24px] font-bold text-gray-900">我的应用</h1>
