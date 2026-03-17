@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# 生成的多份 CSS 文件
+public/css/
+public/css-manifest.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
