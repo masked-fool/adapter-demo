@@ -3,9 +3,32 @@
  * 根据根元素字体大小动态加载对应的 CSS 文件
  */
 
-// CSS 版本配置
-const CSS_VERSIONS = [8, 9, 10, 11, 12, 13, 14, 15, 16];
-const DEFAULT_ROOT_VALUE = 16;
+// CSS 版本缓存
+let CSS_VERSIONS = null;
+
+/**
+ * 从 manifest.json 获取 CSS 版本列表
+ * @returns {Promise<number[]>} 版本号数组
+ */
+async function fetchVersionsFromManifest() {
+  if (CSS_VERSIONS) {
+    return CSS_VERSIONS;
+  }
+
+  try {
+    const res = await fetch("/css-manifest.json");
+    const manifest = await res.json();
+    CSS_VERSIONS = Object.keys(manifest.versions)
+      .map(Number)
+      .sort((a, b) => a - b);
+    console.log(`📋 从 manifest.json 加载 CSS 版本:`, CSS_VERSIONS);
+    return CSS_VERSIONS;
+  } catch (err) {
+    console.warn("⚠️ 无法读取 manifest.json，使用默认版本", err);
+    CSS_VERSIONS = [8, 9, 10, 11, 12, 13, 14, 15, 16];
+    return CSS_VERSIONS;
+  }
+}
 
 // 当前加载的 CSS 链接元素
 let currentLinkElement = null;
@@ -23,14 +46,16 @@ export function getRootFontSize() {
 /**
  * 根据根元素字体大小选择最接近的 CSS 版本
  * @param {number} rootFontSize - 根元素字体大小
- * @returns {number} 最接近的 rootValue
+ * @returns {Promise<number>} 最接近的 rootValue
  */
-export function selectBestRootValue(rootFontSize) {
+export async function selectBestRootValue(rootFontSize) {
+  const versions = await fetchVersionsFromManifest();
+
   // 找到最接近的 rootValue
-  let closestValue = CSS_VERSIONS[0];
+  let closestValue = versions[0];
   let minDiff = Math.abs(rootFontSize - closestValue);
 
-  for (const value of CSS_VERSIONS) {
+  for (const value of versions) {
     const diff = Math.abs(rootFontSize - value);
     if (diff < minDiff) {
       minDiff = diff;
@@ -82,7 +107,7 @@ export async function loadCSSByVersion(rootValue) {
  */
 export async function loadAdaptiveCSS() {
   const rootFontSize = getRootFontSize();
-  const bestRootValue = selectBestRootValue(rootFontSize);
+  const bestRootValue = await selectBestRootValue(rootFontSize);
 
   console.log(
     `📐 根元素字体大小: ${rootFontSize}px, 选择 CSS 版本: rootValue = ${bestRootValue}`
@@ -102,7 +127,7 @@ export function watchRootFontSizeChange(onChange) {
 
   const checkAndLoad = async () => {
     const rootFontSize = getRootFontSize();
-    const newRootValue = selectBestRootValue(rootFontSize);
+    const newRootValue = await selectBestRootValue(rootFontSize);
 
     if (newRootValue !== lastRootValue) {
       lastRootValue = newRootValue;
