@@ -35,7 +35,7 @@ function createPxToRemPlugin(rootValue) {
     selectorBlackList: [],
     replace: true,
     mediaQuery: false,
-    minPixelValue: 8.1,
+    minPixelValue: 0,
   });
 }
 
